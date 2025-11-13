@@ -22,3 +22,4 @@ jupyter files/
 test_date_thingy.py
 test_enrich.py
 test_loading_etl.py
+test_time.py

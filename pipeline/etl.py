@@ -43,7 +43,7 @@ def clean_tickets(df):
     ]
     
     for col in time_columns:
-        df_clean[col] = pd.to_datetime(df_clean[col], format="%Y/%m/%d", errors='coerce')
+        df_clean[col] = pd.to_datetime(df_clean[col], format="%Y/%m/%d %H:%M:%S", errors='coerce')
 
     df_clean['Operator'] = df_clean['Operator'].fillna('UNKNOWN')
     
@@ -99,7 +99,7 @@ def enrich_tickets(tickets_df, employee_df, channel_df, location_df,
         how='left'
     )
     
-    # Extract service code from Report ID (last part after last dash)
+    # Extract service code from Report ID 
     enriched['Service_Code_Extracted'] = enriched['Report ID'].str.split('-').str[-1]
 
     # Service type info
@@ -120,3 +120,37 @@ def enrich_tickets(tickets_df, employee_df, channel_df, location_df,
         how='left'
     )
     return enriched
+
+def compute_sla_metrics(df):
+    """
+    Calculates SLA metrics for each ticket
+    """
+    df_sla = df.copy()
+
+    # Calculate response time in seconds
+    df_sla['response_seconds'] = (
+        df_sla['Ticket Resp Time'] - df_sla['Ticket Open Time']
+    ).dt.total_seconds()
+    
+    # Calculate resolution time in minutes
+    df_sla['resolution_minutes'] = (
+        df_sla['Issue Res Time'] - df_sla['Ticket Resp Time']
+    ).dt.total_seconds() / 60
+
+    """Check if response met SLA"""
+    df_sla['response_sla_pass'] = df_sla['response_seconds'] <= 10
+    df_sla['resolution_sla_pass'] = df_sla['resolution_minutes'] <= 180
+
+    # Categorize resolution performance
+    def categorize_resolution(minutes):
+        if minutes < 30:
+            return 'Excellent'
+        elif minutes < 60:
+            return 'Good'
+        elif minutes <= 180:
+            return 'Fair'
+        else:
+            return 'Critical'
+    
+    df_sla['resolution_category'] = df_sla['resolution_minutes'].apply(categorize_resolution)
+    return df_sla
