@@ -14,3 +14,11 @@ build/
 # Optional: editor folders
 .vscode/
 .idea/
+
+# Ignore Jupyter Notebook checkpoints
+jupyter files/
+
+# Ignore minitest files
+test_date_thingy.py
+test_enrich.py
+test_loading_etl.py
