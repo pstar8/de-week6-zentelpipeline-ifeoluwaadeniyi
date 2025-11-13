@@ -1,0 +1,10 @@
+﻿Fault Key,Fault
+1,Customers End
+2,Line damage
+3,Routine Service
+4,hardware failure
+5,Power Loss
+6,Support network failures
+7,Traffic Spikes
+8,Router Failure
+9,Intrusions
