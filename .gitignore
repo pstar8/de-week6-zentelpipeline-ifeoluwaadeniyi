@@ -1,0 +1,16 @@
+# Ignore Python virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Optional: common Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Optional: editor folders
+.vscode/
+.idea/
