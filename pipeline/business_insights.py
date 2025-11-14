@@ -158,3 +158,101 @@ def analyze_overall_performance(data, weekly_kpis):
         'health_score': health_percentage,
         'category_distribution': category_dist.to_dict()
     }
+
+
+def analyze_response_delays(data):
+    results = {}
+    
+    # ===== 1. CHANNEL ANALYSIS =====
+    print("\n📱 FACTOR 1: COMMUNICATION CHANNEL")
+    
+    channel_stats = data.groupby('Channel').agg({
+        'Report ID': 'count',
+        'response_seconds': 'mean',
+        'response_sla_pass': lambda x: (x.sum() / len(x) * 100)
+    }).round(2)
+    
+    channel_stats.columns = ['Total Tickets', 'Avg Response (sec)', 'SLA Pass Rate (%)']
+    channel_stats = channel_stats.sort_values('Avg Response (sec)', ascending=False)
+    
+    print(channel_stats)
+    
+    print("\n💡 INSIGHTS:")
+    slowest_channel = channel_stats.index[0]
+    fastest_channel = channel_stats.index[-1]
+    slowest_time = channel_stats.iloc[0]['Avg Response (sec)']
+    fastest_time = channel_stats.iloc[-1]['Avg Response (sec)']
+    
+    print(f"   • SLOWEST: {slowest_channel} ({slowest_time:.1f} seconds)")
+    print(f"   • FASTEST: {fastest_channel} ({fastest_time:.1f} seconds)")
+    print(f"   • Difference: {slowest_time - fastest_time:.1f} seconds")
+    
+    results['channel'] = channel_stats
+    
+    # ===== 2. GEOGRAPHIC ANALYSIS (STATE) =====
+    print("\n\n🗺️  FACTOR 2: GEOGRAPHIC LOCATION (STATE)")
+ 
+    state_stats = data.groupby('State').agg({
+        'Report ID': 'count',
+        'response_seconds': 'mean',
+        'response_sla_pass': lambda x: (x.sum() / len(x) * 100)
+    }).round(2)
+    
+    state_stats.columns = ['Total Tickets', 'Avg Response (sec)', 'SLA Pass Rate (%)']
+    state_stats = state_stats.sort_values('Avg Response (sec)', ascending=False)
+    
+    print("\nTOP 5 SLOWEST STATES:")
+    print(state_stats.head(5))
+    
+    print("\nTOP 5 FASTEST STATES:")
+    print(state_stats.tail(5))
+    
+    print("\n💡 INSIGHTS:")
+    slowest_state = state_stats.index[0]
+    fastest_state = state_stats.index[-1]
+    print(f"   • SLOWEST: {slowest_state} ({state_stats.iloc[0]['Avg Response (sec)']:.1f} seconds)")
+    print(f"   • FASTEST: {fastest_state} ({state_stats.iloc[-1]['Avg Response (sec)']:.1f} seconds)")
+    
+    # ===== 3. SERVICE TYPE ANALYSIS =====
+    print("\n\n🔧 FACTOR 3: SERVICE TYPE")
+    
+    service_stats = data.groupby('Service Name').agg({
+        'Report ID': 'count',
+        'response_seconds': 'mean',
+        'response_sla_pass': lambda x: (x.sum() / len(x) * 100)
+    }).round(2)
+    
+    service_stats.columns = ['Total Tickets', 'Avg Response (sec)', 'SLA Pass Rate (%)']
+    service_stats = service_stats.sort_values('Avg Response (sec)', ascending=False)
+    
+    print(service_stats)
+    
+    print("\n💡 INSIGHTS:")
+    slowest_service = service_stats.index[0]
+    fastest_service = service_stats.index[-1]
+    print(f"   • SLOWEST: {slowest_service} ({service_stats.iloc[0]['Avg Response (sec)']:.1f} seconds)")
+    print(f"   • FASTEST: {fastest_service} ({service_stats.iloc[-1]['Avg Response (sec)']:.1f} seconds)")
+    
+    results['service'] = service_stats
+    
+    # ===== 4. FAULT TYPE ANALYSIS =====
+    print("\n\n⚠️  FACTOR 4: FAULT TYPE")
+    
+    fault_stats = data.groupby('Fault Type').agg({
+        'Report ID': 'count',
+        'response_seconds': 'mean',
+        'response_sla_pass': lambda x: (x.sum() / len(x) * 100)
+    }).round(2)
+    
+    fault_stats.columns = ['Total Tickets', 'Avg Response (sec)', 'SLA Pass Rate (%)']
+    fault_stats = fault_stats.sort_values('Avg Response (sec)', ascending=False)
+    
+    print(fault_stats)
+    
+    print("\n💡 INSIGHTS:")
+    slowest_fault = fault_stats.index[0]
+    fastest_fault = fault_stats.index[-1]
+    print(f"   • SLOWEST: {slowest_fault} ({fault_stats.iloc[0]['Avg Response (sec)']:.1f} seconds)")
+    print(f"   • FASTEST: {fastest_fault} ({fault_stats.iloc[-1]['Avg Response (sec)']:.1f} seconds)")
+    
+    results['fault'] = fault_stats
