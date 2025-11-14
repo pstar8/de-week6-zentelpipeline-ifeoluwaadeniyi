@@ -143,7 +143,7 @@ def compute_sla_metrics(df):
     def categorize_resolution(minutes):
         if minutes < 30:
             return 'Excellent'
-        elif minutes < 60:
+        elif minutes <= 60:
             return 'Good'
         elif minutes <= 180:
             return 'Fair'
