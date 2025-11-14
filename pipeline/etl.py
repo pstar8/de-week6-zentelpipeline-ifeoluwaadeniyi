@@ -32,7 +32,6 @@ def clean_tickets(df):
     """
     Cleans the service_data DataFrame
     """
-    # Make a copy so we don't change the original
     df_clean = df.copy()
 
     time_columns = [
@@ -66,7 +65,6 @@ def enrich_tickets(tickets_df, employee_df, channel_df, location_df,
     """
     enriched = tickets_df.copy()
 
-    # Remove duplicates from lookup tables to prevent duplicate rows
     employee_df = employee_df.drop_duplicates(subset=['Employee_name'], keep='first')
     channel_df = channel_df.drop_duplicates(subset=['Channel Key'], keep='first')
     location_df = location_df.drop_duplicates(subset=['State Key'], keep='first')
@@ -154,3 +152,88 @@ def compute_sla_metrics(df):
     
     df_sla['resolution_category'] = df_sla['resolution_minutes'].apply(categorize_resolution)
     return df_sla
+
+def manager_operator_performance(df):
+    """
+    Calculates performance metrics for managers and operators
+    """
+    
+    operator_stats = df.groupby('Operator').agg({
+        'Report ID': 'count',                          # Total tickets
+        'response_seconds': 'mean',                     # Avg response time
+        'resolution_minutes': 'mean',                   # Avg resolution time
+        'response_sla_pass': 'sum',                     # Count of passed responses
+        'resolution_sla_pass': 'sum'                    # Count of passed resolutions
+    }).reset_index()
+    
+    # Rename columns for better understanding    
+    operator_stats.columns = [
+        'Operator',
+        'total_tickets',
+        'avg_response_seconds',
+        'avg_resolution_minutes',
+        'response_pass_count',
+        'resolution_pass_count'
+    ]
+    
+    # Calculate pass rates as percentages
+    operator_stats['response_pass_rate'] = (
+        operator_stats['response_pass_count'] / operator_stats['total_tickets'] * 100
+    )
+    
+    operator_stats['resolution_pass_rate'] = (
+        operator_stats['resolution_pass_count'] / operator_stats['total_tickets'] * 100
+    )
+    
+    escalations = df[df['resolution_minutes'] > 180].groupby('Operator').size().reset_index(name='escalations')
+    
+    operator_stats = operator_stats.merge(escalations, on='Operator', how='left')
+    
+    operator_stats['escalations'] = operator_stats['escalations'].fillna(0).astype(int)
+    
+    operator_stats = operator_stats.sort_values('resolution_pass_rate', ascending=False)
+
+    operator_stats['rank'] = range(1, len(operator_stats) + 1)
+    
+    df_with_manager = df[df['Manager'].notna()]
+    
+    manager_stats = df_with_manager.groupby('Manager').agg({
+        'Report ID': 'count',
+        'response_seconds': 'mean',
+        'resolution_minutes': 'mean',
+        'response_sla_pass': 'sum',
+        'resolution_sla_pass': 'sum'
+    }).reset_index()
+    
+    # Rename columns for better understanding
+    manager_stats.columns = [
+        'Manager',
+        'total_tickets',
+        'avg_response_seconds',
+        'avg_resolution_minutes',
+        'response_pass_count',
+        'resolution_pass_count'
+    ]
+    
+    # Calculate pass rates in percentages
+    manager_stats['response_pass_rate'] = (
+        manager_stats['response_pass_count'] / manager_stats['total_tickets'] * 100
+    )
+    
+    manager_stats['resolution_pass_rate'] = (
+        manager_stats['resolution_pass_count'] / manager_stats['total_tickets'] * 100
+    )
+    
+    escalations_mgr = df_with_manager[df_with_manager['resolution_minutes'] > 180].groupby('Manager').size().reset_index(name='escalations')
+    manager_stats = manager_stats.merge(escalations_mgr, on='Manager', how='left')
+    manager_stats['escalations'] = manager_stats['escalations'].fillna(0).astype(int)
+    
+    manager_stats = manager_stats.sort_values('resolution_pass_rate', ascending=False)
+    manager_stats['rank'] = range(1, len(manager_stats) + 1)
+    
+    performance = {
+        'operators': operator_stats,
+        'managers': manager_stats
+    }
+    
+    return performance
