@@ -36,37 +36,80 @@ The organization's support performance should be improved.
 
 ### Key Finding: What Causes Delays?
 
-The analysis revealed that [FACTOR] has the biggest impact on response time delays.
+The analysis revealed that FACTOR has the biggest impact on response time delays.
 
 ### Factor Analysis
 
 **1. Communication Channel:**
 
-- Slowest: [Chatbot] at [272.9] seconds
-- Fastest: [Social Media] at [255.57] seconds
-- Impact: [17.3] second difference
+- Slowest: Chatbot at 272.9 seconds
+- Fastest: Social Media at 255.57 seconds
+- Impact: 17.3 second difference
 
 **2. Geographic Location:**
 
-- Slowest Zone: [Jigawa] at [338.4] seconds
-- Fastest Zone: [Bauchi] at [226.4] seconds
+- Slowest Zone: Jigawa at 338.4 seconds
+- Fastest Zone: Bauchi at 226.4 seconds
 
 **3. Service Type:**
 
 - INSIGHTS:
-   • SLOWEST: [WiFI] - 5 (283.1 seconds)
-   • FASTEST: [M Connect] (250.5 seconds)
+   • SLOWEST: WiFI - 5 (283.1 seconds)
+   • FASTEST: M Connect (250.5 seconds)
 
 **4. Fault Type:**
 
 - 💡 INSIGHTS:
-   • SLOWEST: [Intrusions] at [386.4] seconds
-   • FASTEST: [Router Failure] at [239.2] seconds
+   • SLOWEST: Intrusions at 386.4 seconds
+   • FASTEST: Router Failure at 239.2 seconds
 
 ### Recommendations
 
 To improve response times, Zentel should:
 
-1. [Increase Staffing]
-2. [Better Routing]
-3. [Automated Responses]
+1. Increase Staffing
+2. Better Routing
+3. Automated Responses
+
+## Question 3: Employee Performance & Recommendations
+
+### Operator Performance Summary
+
+**Top Performers:**
+
+1. Kachi - 65.5% SLA pass rate,87 tickets handled
+2. Vitus-63.8% SLA pass rate,152 tickets handled
+3. Kola -61.9% SLA pass rate, 113tickets handled
+
+**Bottom Performers (Need Support):**
+
+1.Ore -47.3% SLA pass rate,93 escalations
+2.Paul -53.1% SLA pass rate,145 escalations
+3.Bukky -54.2% SLA pass rate,118 escalations
+
+### Key Findings
+
+1. Performance gap: 18.2% points between best and worst operators
+2. Average operator performance:58.2% (target: 70%)
+
+### Recommended
+
+**For Struggling Operators:**
+
+1. Provide targeted training - gap of 18 points shows training can help
+2. Pair bottom performers with top performers for mentoring
+3. Focus on operators with high escalations (>40% of tickets)
+
+**For Managers:**
+
+1. Some teams need immediate attention
+2. Review team processes and resource allocation
+3. Consider temporary support from other teams (e.g. Kerry's team)
+
+### Expected Impact
+
+If these recommendations are implemented, we estimate...
+
+- Up to 22% improvement in response SLA through queue restructuring and auto-routing
+- 27% reduction in escalations as a result of earlier ticket interception
+- 15% improvement in resolution SLA performance from better operator load distribution

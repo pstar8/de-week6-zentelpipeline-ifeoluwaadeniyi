@@ -94,9 +94,7 @@ def analyze_overall_performance(data, weekly_kpis):
         print(f"\nResponse SLA Trend:             {'+' if response_trend > 0 else ''}{response_trend:.2f}% {'📈' if response_trend > 0 else '📉'}")
         print(f"Resolution SLA Trend:           {'+' if resolution_trend > 0 else ''}{resolution_trend:.2f}% {'📈' if resolution_trend > 0 else '📉'}")
     
-    print("\n" + "="*70)
     print("OVERALL BUSINESS HEALTH ASSESSMENT")
-    print("="*70)
     
     # Calculate overall score
     score = 0
@@ -163,8 +161,7 @@ def analyze_overall_performance(data, weekly_kpis):
 def analyze_response_delays(data):
     results = {}
     
-    # ===== 1. CHANNEL ANALYSIS =====
-    print("\n📱 FACTOR 1: COMMUNICATION CHANNEL")
+    # ===== 1. CHANNEL    print("\n📱 FACTOR 1: COMMUNICATION CHANNEL")
     
     channel_stats = data.groupby('Channel').agg({
         'Report ID': 'count',
@@ -256,3 +253,43 @@ def analyze_response_delays(data):
     print(f"   • FASTEST: {fastest_fault} ({fault_stats.iloc[-1]['Avg Response (sec)']:.1f} seconds)")
     
     results['fault'] = fault_stats
+
+def analyze_employee_performance(performance, data):
+    
+    operators = performance['operators']
+    managers = performance['managers']
+    
+    print(f"Total Operators: {len(operators)}")
+    print(f"Target: ≥70% resolution SLA pass rate")
+    
+    # Count how many meet target
+    meeting_target = (operators['resolution_pass_rate'] >= 70).sum()
+    print(f"Meeting Target: {meeting_target} / {len(operators)} ({meeting_target/len(operators)*100:.1f}%)")
+    
+    print("\n🏆 TOP 5 PERFORMERS:")
+    print("-"*70)
+    top_5 = operators.head(5)
+    for idx, row in top_5.iterrows():
+        print(f"{int(row['rank'])}. {row['Operator']:15s} | "
+              f"SLA: {row['resolution_pass_rate']:5.1f}% | "
+              f"Tickets: {int(row['total_tickets']):4d} | "
+              f"Escalations: {int(row['escalations']):3d}")
+    
+    print("\n⚠️  BOTTOM 5 PERFORMERS (Need Improvement):")
+    print("-"*70)
+    bottom_5 = operators.tail(5)
+    for idx, row in bottom_5.iterrows():
+        print(f"{int(row['rank'])}. {row['Operator']:15s} | "
+              f"SLA: {row['resolution_pass_rate']:5.1f}% | "
+              f"Tickets: {int(row['total_tickets']):4d} | "
+              f"Escalations: {int(row['escalations']):3d}")
+    
+    # ===== MANAGER PERFORMANCE =====
+    print(f"Total Managers: {len(managers)}")
+    
+    print("\nRANKINGS:")
+    for idx, row in managers.iterrows():
+        print(f"{int(row['rank'])}. {row['Manager']:15s} | "
+              f"SLA: {row['resolution_pass_rate']:5.1f}% | "
+              f"Tickets: {int(row['total_tickets']):4d} | "
+              f"Escalations: {int(row['escalations']):3d}")
