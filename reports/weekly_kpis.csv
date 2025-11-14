@@ -1,0 +1,7 @@
+year_week,total_tickets,avg_response_seconds,avg_resolution_minutes,response_pass_count,response_pass_rate,resolution_pass_count,resolution_pass_rate
+2020-W49,1085,269.42,141.64,220,20.28,641,59.08
+2020-W50,1257,267.7,138.14,264,21.0,748,59.51
+2020-W51,1219,266.86,138.39,260,21.33,739,60.62
+2020-W52,1304,259.17,143.28,258,19.79,774,59.36
+2020-W53,159,258.91,128.51,33,20.75,99,62.26
+<NA>-W<NA>,974,,170.1,0,0.0,493,50.62
